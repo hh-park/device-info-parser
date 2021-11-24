@@ -5,10 +5,19 @@ from DeviceService import DeviceHandler
 app = Flask(__name__)
 api = Api(app)
 
-@api.route('/db')
+@api.route('/db', methods=['GET', 'POST'])
 class UpdateDB(Resource):
 
     def get(self):
+        dh = DeviceHandler()
+        dh.view_db()
+
+        return {
+            "msg" : "DB selected successfully",
+            "succ" : True
+        }
+
+    def post(self):
 
         json_dict = request.json.get('json_data')
         dh = DeviceHandler()
@@ -29,7 +38,7 @@ class SelectID(Resource):
         res = dh.select_by_id(search_param)
 
         return {
-            "msg" : "Searched device successfully",
+            "msg" : "Searched device successfully by id",
             "succ" : True,
             "search_parameter" : search_param,
             "search_result" : res
@@ -45,7 +54,7 @@ class SelectType(Resource):
         res = dh.select_by_type(search_param)
 
         return {
-            "msg" : "Searched device successfully",
+            "msg" : "Searched device successfully by type",
             "succ" : True,
             "search_parameter" : search_param,
             "search_result" : res
@@ -61,7 +70,7 @@ class SelectStatus(Resource):
         res = dh.select_by_status(search_param)
 
         return {
-            "msg" : "Searched device successfully",
+            "msg" : "Searched device successfully by status",
             "succ" : True,
             "search_parameter" : search_param,
             "search_result" : res
@@ -69,4 +78,4 @@ class SelectStatus(Resource):
 
 if __name__ == "__main__":
 
-    app.run(debug=True, port=80)
+    app.run(debug=True)
