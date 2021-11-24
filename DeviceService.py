@@ -30,15 +30,14 @@ def db_select_query(query, db):
     return row
 
 
-def db_insert_query(query, db_session):
+def db_insert_query(query, db):
 
     try:
-        cursor = db_session.cursor()
+        cursor = db.cursor()
         cursor.execute(query)
         id = cursor.lastrowid
-        db_session.commit()
+        db.commit()
         return id
 
     except pymysql.Error as err:
         print("Something went wrong: {}".format(err))
-        raise ("DbInsertError")

@@ -13,8 +13,6 @@ file_name = CONFIG['file_name']
 app = Flask(__name__)
 api = Api(app)
 
-todos = {}
-count = 1
 json_dict = {}
 
 @api.route('/db')
@@ -24,16 +22,38 @@ class RestApi(Resource):
 
         global json_dict
 
+        db_session = utils.db_create_session(db_host,db_id,db_pw,test_db)
         json_dict = utils.get_json_data(file_name)
-        inv_db_session = utils.db_create_session(db_host,db_id,db_pw,test_db)
-        query = f'''
-            select *
-            from test.device
-        '''
-        res = utils.db_select_query(query, inv_db_session)
 
+        for id in json_dict:
 
+            device = json_dict[id]
+            if not device['coordinates']:
+                device['coordinates'] = [0, 0]
 
+            query = f'''
+                select *
+                from test.device
+                where id = '{id}';
+            '''
+            res = utils.db_select_query(query, db_session)
+
+            if res:
+                update_query = f'''
+                    UPDATE test.device 
+                    SET id = '{device['id']}', type = '{device['type']}', coordinates1 = {device['coordinates'][0]}, 
+                    coordinates2 = {device['coordinates'][1]}, status = '{device['status']}', timezone = '{device['timezone']}'
+                    WHERE id = '{id}';
+                '''
+                utils.db_insert_query(update_query, db_session)
+
+            else:
+                insert_query = f'''
+                    INSERT INTO test.device 
+                    VALUES ('{device['id']}', '{device['type']}', {device['coordinates'][0]}, {device['coordinates'][1]}, 
+                        '{device['status']}', '{device['timezone']}')
+                '''
+                utils.db_insert_query(insert_query,db_session)
 
 if __name__ == "__main__":
 
