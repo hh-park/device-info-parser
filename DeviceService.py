@@ -89,7 +89,7 @@ class DeviceHandler(Utils):
                 '''
                 self.db_insert_query(insert_query,db_session)
 
-    def select_db(self, search_param):
+    def select_by_id(self, search_param):
 
         db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
         query = f'''
@@ -100,3 +100,24 @@ class DeviceHandler(Utils):
         res = self.db_select_query(query, db_session)
         return res
 
+    def select_by_type(self, search_param):
+
+        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
+        query = f'''
+            select *
+            from test.device
+            where type = '{search_param}';
+        '''
+        res = self.db_select_query(query, db_session)
+        return res
+
+    def select_by_status(self, search_param):
+
+        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
+        query = f'''
+            select *
+            from test.device
+            where status = '{search_param}';
+        '''
+        res = self.db_select_query(query, db_session)
+        return res

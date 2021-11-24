@@ -6,7 +6,7 @@ app = Flask(__name__)
 api = Api(app)
 
 @api.route('/db')
-class Requirement1(Resource):
+class UpdateDB(Resource):
 
     def get(self):
 
@@ -19,29 +19,54 @@ class Requirement1(Resource):
             "succ" : True
         }
 
-@api.route('/id')
-class Requirement2(Resource):
+@api.route('/id', methods=['GET'])
+class SelectID(Resource):
 
     def get(self):
 
         search_param = request.json.get('id')
         dh = DeviceHandler()
-        res = dh.select_db(search_param)
-
-        result ={}
-        result['id'] = res[0]['id']
-        result['type'] = res[0]['type']
-        result['coordinates1'] = res[0]['coordinates1']
-        result['coordinates2'] = res[0]['coordinates2']
-        result['status'] = res[0]['status']
-        result['timezone'] = res[0]['timezone']
+        res = dh.select_by_id(search_param)
 
         return {
             "msg" : "Searched device successfully",
             "succ" : True,
             "search_parameter" : search_param,
-            "search_result" : result
+            "search_result" : res
         }
+
+@api.route('/type', methods=['GET'])
+class SelectType(Resource):
+
+    def get(self):
+
+        search_param = request.json.get('type')
+        dh = DeviceHandler()
+        res = dh.select_by_type(search_param)
+
+        return {
+            "msg" : "Searched device successfully",
+            "succ" : True,
+            "search_parameter" : search_param,
+            "search_result" : res
+        }
+
+@api.route('/status', methods=['GET'])
+class SelectStatus(Resource):
+
+    def get(self):
+
+        search_param = request.json.get('status')
+        dh = DeviceHandler()
+        res = dh.select_by_status(search_param)
+
+        return {
+            "msg" : "Searched device successfully",
+            "succ" : True,
+            "search_parameter" : search_param,
+            "search_result" : res
+        }
+
 if __name__ == "__main__":
 
     app.run(debug=True, port=80)
