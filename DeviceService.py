@@ -10,13 +10,8 @@ db_pw = CONFIG['db_pw']
 test_db = CONFIG['test_db']
 file_name = CONFIG['file_name']
 
+
 class Utils(object):
-
-    def get_json_data(self, json_file):
-
-        with open(json_file, 'r', encoding='UTF-8') as jf:
-            return json.load(jf)
-
 
     def db_create_session(self, host, db_id, db_pw, db):
 
@@ -25,7 +20,6 @@ class Utils(object):
 
         except pymysql.Error as err:
             print(f'Something went wrong {err}')
-
 
     def db_select_query(self, query, db):
 
@@ -39,7 +33,6 @@ class Utils(object):
             raise ("DbSelectError")
 
         return row
-
 
     def db_insert_query(self, query, db):
 
@@ -56,9 +49,21 @@ class Utils(object):
 
 class DeviceHandler(Utils):
 
+    def __init__(self):
+
+        self.db_session = self.db_create_session(db_host, db_id, db_pw, test_db)
+
+    def view_db(self):
+
+        query = f'''
+            select *
+            from test.device
+        '''
+        res = self.db_select_query(query, self.db_session)
+        return res
+
     def update_db(self, json_dict):
 
-        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
         for id in json_dict:
 
             device = json_dict[id]
@@ -70,7 +75,7 @@ class DeviceHandler(Utils):
                 from test.device
                 where id = '{id}';
             '''
-            res = self.db_select_query(query, db_session)
+            res = self.db_select_query(query, self.db_session)
 
             if res:
                 update_query = f'''
@@ -79,7 +84,7 @@ class DeviceHandler(Utils):
                     coordinates2 = {device['coordinates'][1]}, status = '{device['status']}', timezone = '{device['timezone']}'
                     WHERE id = '{id}';
                 '''
-                self.db_insert_query(update_query, db_session)
+                self.db_insert_query(update_query, self.db_session)
 
             else:
                 insert_query = f'''
@@ -87,37 +92,34 @@ class DeviceHandler(Utils):
                     VALUES ('{device['id']}', '{device['type']}', {device['coordinates'][0]}, {device['coordinates'][1]}, 
                         '{device['status']}', '{device['timezone']}')
                 '''
-                self.db_insert_query(insert_query,db_session)
+                self.db_insert_query(insert_query, self.db_session)
 
     def select_by_id(self, search_param):
 
-        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
         query = f'''
             select *
             from test.device
             where id = '{search_param}';
         '''
-        res = self.db_select_query(query, db_session)
+        res = self.db_select_query(query, self.db_session)
         return res
 
     def select_by_type(self, search_param):
 
-        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
         query = f'''
             select *
             from test.device
             where type = '{search_param}';
         '''
-        res = self.db_select_query(query, db_session)
+        res = self.db_select_query(query, self.db_session)
         return res
 
     def select_by_status(self, search_param):
 
-        db_session = self.db_create_session(db_host,db_id,db_pw,test_db)
         query = f'''
             select *
             from test.device
             where status = '{search_param}';
         '''
-        res = self.db_select_query(query, db_session)
+        res = self.db_select_query(query, self.db_session)
         return res
