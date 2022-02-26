@@ -1,6 +1,4 @@
 # device-info-parser
-> Before jumping into the project description, I apologize for the delay of submission due to participation to team and company dinners.😢
->  
 > I couldn't implement the pagination in time, but I hope to have chance to dig into it and implement it in the future.
 
 ## Summary
